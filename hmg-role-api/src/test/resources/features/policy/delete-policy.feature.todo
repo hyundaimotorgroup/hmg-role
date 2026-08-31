@@ -1,0 +1,88 @@
+#TODO: Update the unit test with new Scenario
+Feature: Delete Policy
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tags1",
+            "tags2"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_DEL",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-D1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: delete Policy by Key
+    When Resource Admin wants to delete the Policy with key 'FAQ_ADMIN_POLICY_DEL' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Policy deleted successfully with response code 204
+
+  Scenario: Positive: delete Policy with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": ["tag1", "tag2"]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-D1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When Resource Admin wants to delete the Policy with key 'FAQ_ADMIN_POLICY' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57722'
+    Then the Policy deleted successfully with response code 204
+
+  Scenario: Negative: delete Policy by a non-existent Key
+    When Resource Admin wants to delete the Policy with key "FailKey" and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Policy deletion fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'

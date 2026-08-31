@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+	<changeSet id="20240802_create_user_condition_operand"
+		author="henrio septiano">
+		<createTable ifNotExists="true"
+			tableName="user_condition_operands">
+			<column name="user_condition_operand_id" type="bigint"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="operand" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="position" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="type" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_condition_set_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_abac_user_condition_operand_user_condition_set"
+					references="user_condition_sets(user_condition_set_id)" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

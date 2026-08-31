@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Add denormalized columns to abac_policy_items table to avoid N+1 queries and exploding joins -->
+    <changeSet id="20260302_abac_policy_items_denormalized_add_columns" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE abac_policy_items
+                ADD COLUMN scope_key VARCHAR(100),
+                ADD COLUMN project_key VARCHAR(100),
+                ADD COLUMN resource_set_key VARCHAR(100),
+                ADD COLUMN user_set_key VARCHAR(100),
+                ADD COLUMN action_name VARCHAR(100),
+                ADD COLUMN policy_key VARCHAR(100);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

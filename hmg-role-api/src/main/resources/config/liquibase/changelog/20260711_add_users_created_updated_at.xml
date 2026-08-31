@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="20260711_add_users_created_updated_at" author="[Z4999972] Aditya Murda">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="created_at"/>
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE users
+                ADD COLUMN created_at DATETIME,
+                ADD COLUMN created_by VARCHAR(50),
+                ADD COLUMN updated_at DATETIME,
+                ADD COLUMN updated_by VARCHAR(50);
+        </sql>
+    </changeSet>
+    <changeSet id="20260711_fill_users_created_updated_at" author="[Z4999972] Aditya Murda">
+        <sql>
+            UPDATE users
+            SET created_by = 'SYSTEM',
+                created_at = '1970-01-01 00:00:00',
+                updated_by = 'SYSTEM',
+                updated_at = '1970-01-01 00:00:00'
+            WHERE created_by IS NULL OR created_by = '';
+        </sql>
+    </changeSet>
+    <changeSet id="20260711_notnull_users_created_updated_at" author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE users
+                MODIFY COLUMN created_at DATETIME NOT NULL,
+                MODIFY COLUMN created_by VARCHAR(50) NOT NULL,
+                MODIFY COLUMN updated_at DATETIME NOT NULL,
+                MODIFY COLUMN updated_by VARCHAR(50) NOT NULL;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

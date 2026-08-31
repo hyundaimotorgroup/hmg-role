@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet
+		id="20241121_rename_column_resource_set_operands_type"
+		author="Ahmad Habbuddin">
+
+		<renameColumn columnDataType="varchar(20)"
+			newColumnName="operand_type" oldColumnName="type"
+			tableName="resource_set_operands" />
+
+		<addNotNullConstraint
+			tableName="resource_set_operands" columnName="operand_type"
+			columnDataType="varchar(20)" />
+
+	</changeSet>
+</databaseChangeLog>

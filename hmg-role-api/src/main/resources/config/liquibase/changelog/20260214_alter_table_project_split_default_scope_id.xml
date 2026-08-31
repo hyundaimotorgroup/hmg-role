@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260214_rename_default_scope_id_to_rbac" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE projects
+                CHANGE COLUMN default_scope_id default_scope_id_rbac BIGINT;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260214_add_default_scope_id_abac" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE projects
+                ADD COLUMN default_scope_id_abac BIGINT;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260214_update_default_scope_id_abac" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            UPDATE projects p
+            SET p.default_scope_id_abac = (
+                SELECT s.scope_id
+                FROM scopes s
+                WHERE s.project_id = p.project_id
+                  AND s.access_control_model = 'ABAC'
+                  AND s.is_deleted = 0
+                LIMIT 1
+            )
+            WHERE p.is_deleted = 0;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

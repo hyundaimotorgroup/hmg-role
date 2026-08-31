@@ -1,0 +1,501 @@
+#TODO: Update the unit test with new Scenario
+Feature: RBAC Permission Checking
+
+  Background:
+    Given the HMG Role Admin has the following API key: '22ee17bd-699e-4b6b-a30b-e854e6c576c5'
+    * a Project with the following attributes exists
+      """json
+      {
+         "key": "hmg-notice",
+         "name": "HMG Notice"
+      }
+      """
+    And a Member with specific attributes exists
+      """json
+        {
+           "key": "alice_ignite1",
+           "name": "alice",
+           "apiKey": "22ee17bd-699e-4b6b-a30b-e854e6c57821",
+           "type": "PROJECT_ADMIN"
+        }
+      """
+    * a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    * a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-2",
+         "name": "FAQ-2",
+         "description": "FAQ-2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+    * a Role for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+      {
+         "name": "ADMIN-NOTICE",
+         "key": "role-key-permission-test",
+         "description": "Role for the Administrator"
+      }
+      """
+    * a User for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+        {
+           "key": "john@hmg-notice",
+           "name": "John Doe",
+           "roles": [
+              "ADMIN-NOTICE"
+           ]
+        }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "update",
+            "create"
+         ],
+         "roles": [
+            "role-key-permission-test"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57821' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_2",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-2",
+         "actions": [
+            "update",
+            "create"
+         ],
+         "roles": [
+            "role-key-permission-test"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: User-Role DB provided, Payload user.id provided, Payload roles provided
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "key": "john@hmg-notice",
+            "roles": [
+               "role-key-permission-test"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: User-Role DB provided, Payload user.id provided, Payload roles not provide
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "key": "john@hmg-notice",
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: Extended RBAC Permission Checking with case: User-Role DB provided, Payload user.id not provide, Payload roles not provide
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: User-Role DB provided, Payload user.id not provide, Payload roles provided
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "roles": [
+               "role-key-permission-test"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: Extended RBAC Permission Checking with case: User-Role DB not provide, Payload user.id not provide, Payload roles not provide
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: User-Role DB not provide, Payload user.id not provide, Payload roles provided
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "roles": [
+               "role-key-permission-test"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: Extended RBAC Permission Checking with case: User-Role DB not provide, Payload user.id provided, Payload roles not provide
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "key": "john@hmg-role",
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: Un inputted Scope, User-Role DB provided, Payload user.id provided, Payload roles provided
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "key": "john@hmg-notice",
+            "roles": [
+               "role-key-permission-test"
+            ]
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-2"
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-2",
+                  "scope": null
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role": "role-key-permission-test",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: Extended RBAC Permission Checking with case: Uninputted Scope, User-Role DB provided, Payload user.id provided, Payload roles provided
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "key": "john@hmg-notice",
+            "roles": [
+               "role-key-permission-test"
+            ]
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-2"
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+              "id": "CCI-FAQ-1",
+              "type": "FAQ-2",
+              "scope": null,
+              "action": "update",
+              "role": "role-key-permission-test",
+              "effect": "ALLOW"
+            },
+            {
+              "id": "CCI-FAQ-1",
+              "type": "FAQ-2",
+              "scope": null,
+              "action": "create",
+              "role": "role-key-permission-test",
+              "effect": "ALLOW"
+             }
+          ]
+      }
+      """

@@ -1,0 +1,49 @@
+spring:
+  profiles:
+    active: test
+  devtools:
+    add-properties: false
+  liquibase:
+    change-log: classpath:/config/liquibase/master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+  sql:
+    init:
+      mode: always
+  application:
+    name: hmg-role-api
+  cloud:
+    aws:
+      secretsmanager:
+        enabled: false
+spring.datasource.url: jdbc:h2:mem:testdb
+spring.datasource.driverClassName: org.h2.Driver
+spring.datasource.username: sa
+spring.datasource.password: password
+spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+spring.config.import: optional:aws-secretsmanager:dev/hmgrole/secrets
+
+
+springdoc:
+  packages-to-scan: com.hmg.role
+hmg-role:
+  admin:
+    api-key: 22ee17bd-699e-4b6b-a30b-e854e6c576c5
+    name: SYSTEM
+frontend-domain: null
+backend-domain: null
+cdc:
+  uploader:
+    # S3 Client
+    endpoint: http://localhost:9001
+    accessKey: minioadmin
+    secretKey: minioadmin
+    region: us-east-1
+    bucket: cdc-bucket

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260209_refactor_user_set_rename_user_condition_set_operands"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            RENAME TABLE user_set_condition_operands TO user_set_operands;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260209_refactor_user_set_rename_column_user_condition_set_id_to_user_set_condition_id"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE user_set_operands
+                CHANGE COLUMN user_condition_set_id user_set_condition_id BIGINT NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260209_refactor_resource_set_add_resource_set_name"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE resource_sets ADD COLUMN resource_set_name VARCHAR(125) NOT NULL;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

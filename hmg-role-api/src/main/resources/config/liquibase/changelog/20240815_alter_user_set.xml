@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20240815_user_set" author="henrio septiano">
+
+		<dropForeignKeyConstraint
+			baseTableName="user_condition_sets"
+			constraintName="fk_abac_user_condition_set_user_set" />
+
+		<dropForeignKeyConstraint
+			baseTableName="abac_policy_items"
+			constraintName="fk_abac_policy_user_set" />
+
+		<modifyDataType tableName="user_sets"
+			columnName="user_set_id" newDataType="BIGINT" />
+
+		<dropPrimaryKey tableName="user_sets" />
+
+		<renameColumn tableName="user_sets"
+			oldColumnName="user_set_id" newColumnName="id"
+			columnDataType="BIGINT" />
+
+		<renameColumn tableName="user_sets"
+			oldColumnName="condition_set_operator"
+			newColumnName="condition_group_operator" columnDataType="varchar(50)" />
+
+		<addPrimaryKey columnNames="id"
+			constraintName="PK_user_sets" tableName="user_sets" />
+
+		<modifyDataType tableName="user_sets" columnName="id"
+			newDataType="BIGINT AUTO_INCREMENT" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="user_set_id" baseTableName="user_condition_sets"
+			referencedColumnNames="id" referencedTableName="user_sets"
+			constraintName="fk_abac_user_condition_set_user_set" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="user_set_id" baseTableName="user_condition_sets"
+			referencedColumnNames="id" referencedTableName="user_sets"
+			constraintName="fk_abac_policy_user_set" />
+	</changeSet>
+</databaseChangeLog>

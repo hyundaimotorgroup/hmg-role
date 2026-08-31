@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Populate the denormalized columns with data from related tables -->
+    <changeSet id="20260302_abac_policy_items_denormalized_populate_data" author="[Z4999972] Aditya Murda Nugraha">
+        <!-- Update user_set_key from user_sets -->
+        <sql>
+            UPDATE abac_policy_items api
+                INNER JOIN user_sets us ON api.user_set_id = us.id
+            SET api.user_set_key = us.user_set_key
+            WHERE api.is_deleted = false AND us.is_deleted = false;
+        </sql>
+
+        <!-- Update policy_key from abac_policies -->
+        <sql>
+            UPDATE abac_policy_items api
+                INNER JOIN abac_policies ap ON api.policy_id = ap.policy_id
+            SET api.policy_key = ap.policy_key
+            WHERE api.is_deleted = false AND ap.is_deleted = false;
+        </sql>
+
+        <!-- Update project_key from abac_policies and projects -->
+        <sql>
+            UPDATE abac_policy_items api
+                INNER JOIN abac_policies ap ON api.policy_id = ap.policy_id
+                INNER JOIN projects p ON ap.project_id = p.project_id
+            SET api.project_key = p.project_key
+            WHERE api.is_deleted = false AND ap.is_deleted = false AND p.is_deleted = false;
+        </sql>
+
+        <!-- Update action_name from resource_set_actions -->
+        <sql>
+            UPDATE abac_policy_items api
+                INNER JOIN resource_set_actions rsa ON api.resource_set_action_id = rsa.id
+            SET api.action_name = rsa.action_name
+            WHERE api.is_deleted = false AND rsa.is_deleted = false;
+        </sql>
+
+        <!-- Update resource_set_key from resource_set_actions and resource_sets -->
+        <sql>
+            UPDATE abac_policy_items api
+                INNER JOIN resource_set_actions rsa ON api.resource_set_action_id = rsa.id
+                INNER JOIN resource_sets rs ON rsa.resource_set_id = rs.id
+            SET api.resource_set_key = rs.resource_set_key
+            WHERE api.is_deleted = false AND rsa.is_deleted = false AND rs.is_deleted = false;
+        </sql>
+
+        <!-- Update scope_key from scopes -->
+        <sql>
+            UPDATE abac_policy_items api
+                LEFT JOIN scopes s ON api.scope_id = s.scope_id
+            SET api.scope_key = s.scope_key
+            WHERE api.is_deleted = false AND s.is_deleted = false;
+        </sql>
+    </changeSet>
+
+    <!-- Add indexes for better query performance -->
+    <changeSet id="20260302_abac_policy_items_denormalized_add_indexes" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            CREATE INDEX idx_abac_policy_items_search ON abac_policy_items(
+                project_key,
+                scope_key,
+                resource_set_key,
+                action_name,
+                user_set_key
+            );
+        </sql>
+        <sql>
+            CREATE INDEX idx_abac_policy_items_policy_key ON abac_policy_items(policy_key);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

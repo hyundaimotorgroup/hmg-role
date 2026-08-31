@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260227_add_base_entity_columns_to_abac_policies" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE abac_policies
+            ADD COLUMN created_by VARCHAR(255),
+            ADD COLUMN created_at DATETIME DEFAULT NOW(),
+            ADD COLUMN updated_by VARCHAR(255),
+            ADD COLUMN updated_at DATETIME DEFAULT NOW();
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260227_update_existing_abac_policies_timestamps" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            UPDATE abac_policies
+            SET created_at = NOW(),
+                updated_at = NOW()
+            WHERE created_at IS NULL OR updated_at IS NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

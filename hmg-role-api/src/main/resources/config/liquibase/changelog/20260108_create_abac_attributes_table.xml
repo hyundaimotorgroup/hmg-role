@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260108_create_abac_attributes_table"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            CREATE TABLE condition_operands (
+                id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                project_id BIGINT NOT NULL, -- REFERENCES project.project_id
+                operand VARCHAR(55) NOT NULL,
+                operand_type VARCHAR(10) NOT NULL,
+                operand_subject VARCHAR(20) NOT NULL,
+                is_deleted TINYINT NOT NULL DEFAULT 0,
+
+                CONSTRAINT uk_condition_operands UNIQUE (project_id, operand, operand_type, operand_subject, is_deleted)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260108_migrate_abac_attributes" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            INSERT INTO condition_operands (operand, operand_type, operand_subject, project_id, is_deleted)
+                SELECT DISTINCT left(usco.operand, 55), left(usco.operand_type, 10), 'USER_SET', p.project_id, 0
+                FROM user_sets u
+                    LEFT JOIN user_set_conditions usc ON u.id = usc.user_set_id
+                    LEFT JOIN user_set_condition_operands usco ON usco.user_condition_set_id = usc.id
+                    LEFT JOIN projects p ON u.project_id = p.project_id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260108_create_operand_references" author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE user_set_condition_operands
+                ADD COLUMN operand_id BIGINT NOT NULL;
+        </sql>
+        <sql>
+            UPDATE user_set_condition_operands r
+                LEFT JOIN condition_operands t ON r.operand = t.operand AND r.operand_type = t.operand_type
+                SET r.operand_id = t.id
+            WHERE t.operand_subject = 'USER_SET';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20241119_alter_role_name_length"
+		author="Ahmad Habbuddin">
+
+		<modifyDataType columnName="name"
+			newDataType="varchar(75)" tableName="roles" />
+		<addNotNullConstraint tableName="roles"
+			columnName="name" columnDataType="varchar(75)" />
+
+	</changeSet>
+</databaseChangeLog>

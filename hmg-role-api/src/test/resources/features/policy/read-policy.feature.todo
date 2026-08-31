@@ -1,0 +1,165 @@
+#TODO: Update the unit test with new Scenario
+Feature: Read Policy
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-R1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: Get Policies
+    Given The Resource Admin wants to get All Policy with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get all Policy
+    Then the request is successfully with response code 200
+    And a list of all Policy is returned in the response
+      """json
+      {
+         "results": [
+            {
+               "key": "FAQ_ADMIN_POLICY",
+               "description": "FAQ resource policy for Admin",
+               "resourceType": "FAQ",
+               "scope": "",
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ],
+               "roles": [
+                  "ADMIN-R1"
+               ],
+               "effect": "ALLOW"
+            }
+         ],
+         "metadata": {
+            "totalCount": 1,
+            "totalPageCount": 1,
+            "size": 10
+         }
+      }
+      """
+
+  Scenario: Positive: Get a Policy by key
+    Given Resource Admin wants to retrieve a Policy with the key 'FAQ_ADMIN_POLICY' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get Policy by key
+    Then the request is successfully with response code 200
+    And return the Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-R1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: Get a Policy with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-R1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And Resource Admin wants to retrieve a Policy with the key 'FAQ_ADMIN_POLICY' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57722'
+    When the Resource Admin requests to get Policy by key
+    Then the request is successfully with response code 200
+    And return the Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-R1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Negative: Get a Policy by a non-existent Key
+    Given Resource Admin wants to retrieve a Policy with the key "wrong_key" and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get Policy by key
+    Then the request is fails with response code 404
+    And the response body read includes status 404 and error message 'Not Found'

@@ -1,0 +1,133 @@
+server:
+  port: 8080
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: access
+      prefix: app
+      suffix: .log
+      rotate: true
+      pattern: >-
+        {"timestamp":"%t","method":"%m","endpointURI":"%U","status":%s}
+spring:
+  main:
+    banner-mode: off
+  threads:
+    virtual:
+      enabled: true
+  devtools:
+    add-properties: false
+  liquibase:
+    change-log: classpath:/config/liquibase/master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        cache:
+          redisson:
+            address: "${spring.jpa.properties.hibernate.cache.redisson.address}"
+            username: "${spring.jpa.properties.hibernate.cache.redisson.username}"
+            password: "${spring.jpa.properties.hibernate.cache.redisson.password}"
+            clientName: null
+            timeout: 3000
+            connectTimeout: 10000
+            scanInterval: 30000
+            isClusterServerEnabled: false
+            entity:
+              expiration:
+                time_to_live: 3600000 # TTL set to 1 hour, in millis
+                max_idle_time: 3600000 # max idle time set the same as TTL, this could be modified later if needed
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: com.hmg.role.common.config.RedissonConfig
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  sql:
+    init:
+      mode: always
+  application:
+    name: hmg-role-api
+  datasource:
+    url: "${spring.datasource.url}"
+    username: "${spring.datasource.username}"
+    password: "${spring.datasource.password}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  config:
+    import: aws-secretsmanager:dev/hmgrole/secrets
+  cloud:
+    aws:
+      secretsmanager:
+        enabled: false
+        region: ap-northeast-2
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+springdoc:
+  packages-to-scan: com.hmg.role
+hmg-role:
+  admin:
+    api-key: "${hmg-role.admin.api-key}"
+    name: SYSTEM
+logging:
+  level:
+    root: info
+frontend-domain: "${frontend-domain}"
+backend-domain: "${backend-domain}"
+cdc:
+  enabled: false # false until we get the S3 bucket
+  timer-grace-millis: 100
+  #base-working-path: "${cdc.base-working-path}"
+  storage:
+    identity:
+      provider: S3 # parameterize this later if there's need for migrations
+  s3:
+    iamAdmin: # may need to differ from S3 policy_item writer user
+      accessKey: "${cdc.s3.iamAdmin.accessKey}"
+      secretKey: "${cdc.s3.iamAdmin.secretKey}"
+    region: "${cdc.s3.region}" # should be that of Seoul (ap-northeast-2)
+    accessKey: "${cdc.s3.accessKey}"
+    secretKey: "${cdc.s3.secretKey}"
+    bucket: "${cdc.s3.bucket}"
+debezium:
+  topic-prefix: hmg_role_policy_items
+  mysql:
+    # standard MySQL connector properties
+    # TODO uncomment later after credentials prepared
+    connector: "io.debezium.connector.mysql.MySqlConnector"
+    #user: "${debezium.mysql.user}"
+    #password: "${debezium.mysql.password}"
+    #server-id: "${debezium.mysql.serverId}"      # unique integer
+    target-table: "hmgrole.rbac_policy_items" # comma-separated values of dbname.tablename
+
+    # snapshot behavior (first run = initial snapshot, then stream binlog)
+    snapshot-mode: initial                  # or: never / when_needed / always
+    snapshot-locking-mode: none             # avoid table locks (see note below)
+
+    # event content
+    include-schema-changes: false           # don’t emit DDL change topics
+    # Single Message Transform (unwrap) to simplify payloads
+    unwrap:
+      enabled: true
+      add-fields: "op,table,ts_ms"
+      drop-tombstones: true
+
+  engine:
+    # Debezium Engine state stores
+    # offset-storage: org.apache.kafka.connect.storage.FileOffsetBackingStore # currently unused
+    # offset-file: /srv/data/debezium/offsets.dat
+    offset-flush-interval-ms: 6000
+
+    # schema-history-internal: io.debezium.storage.file.history.FileSchemaHistory # currently unused
+    # schema-history-file: /srv/data/debezium/schemahistory.dat
+
+    # Engine tuning (AsyncEmbeddedEngine is default from 3.2+)
+    # Optional: parallelism knobs depend on connector support
+    # engine.max.queue.size: 8192
+    # engine.poll.interval.ms: 100

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260210_condition_operand_rename_operand_type_to_operand_data_type"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE condition_operands RENAME COLUMN operand_type TO operand_data_type;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260210_condition_operand_add_operand_type"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE condition_operands ADD COLUMN operand_type VARCHAR(10) NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260210_condition_operand_migrate_data"
+               author="[Z4999972] Aditya Murda Nugraha"
+               runInTransaction="true">
+        <sql>
+            UPDATE condition_operands
+            SET operand_type = 'ATTRIBUTE'
+            WHERE operand_data_type LIKE 'ATTRIBUTE_%';
+        </sql>
+
+        <sql>
+            UPDATE condition_operands
+            SET operand_data_type = SUBSTRING(operand_data_type, 11)
+            WHERE operand_data_type LIKE 'ATTRIBUTE_%';
+        </sql>
+
+        <sql>
+            UPDATE condition_operands
+            SET operand_type = 'LITERAL'
+            WHERE operand_type IS NULL OR operand_type = '';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

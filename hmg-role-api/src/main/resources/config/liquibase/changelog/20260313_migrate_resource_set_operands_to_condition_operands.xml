@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260313_migrate_resource_set_operands_to_condition_operands"
+               author="[Z4999972] Aditya Murda">
+        <sql>
+            INSERT IGNORE INTO condition_operands (operand, operand_data_type, operand_type, operand_subject, project_id, is_deleted)
+                SELECT DISTINCT
+                    left(rso.operand, 55),
+                    left(rso.operand_type, 10),
+                    'LITERAL',
+                    'RESOURCE_SET',
+                    p.project_id,
+                    0
+                FROM resource_sets rs
+                    LEFT JOIN resource_set_conditions rsc ON rs.id = rsc.resource_set_id
+                    LEFT JOIN resource_set_operands rso ON rso.resource_set_condition_id = rsc.id
+                    LEFT JOIN projects p ON rs.project_id = p.project_id
+                WHERE rso.operand IS NOT NULL AND rso.operand_type IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260313_populate_operand_id_in_resource_set_operands"
+               author="[Z4999972] Aditya Murda">
+        <sql>
+            UPDATE resource_set_operands r
+                INNER JOIN resource_set_conditions rsc ON r.resource_set_condition_id = rsc.id
+                INNER JOIN resource_sets rs ON rsc.resource_set_id = rs.id
+                INNER JOIN condition_operands t
+                    ON r.operand = t.operand
+                    AND r.operand_type = t.operand_data_type
+                    AND t.operand_subject = 'RESOURCE_SET'
+                    AND t.project_id = rs.project_id
+                SET r.operand_id = t.id;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

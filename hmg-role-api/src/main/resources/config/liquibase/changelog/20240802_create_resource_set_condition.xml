@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+	<changeSet id="20240802_create_resource_set_condition"
+		author="henrio septiano">
+		<createTable ifNotExists="true"
+			tableName="resource_set_conditions">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="operator" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="resource_set_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_abac_resource_condition"
+					references="resource_sets(id)" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

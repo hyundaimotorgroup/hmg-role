@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260610_fix_condition_operand_unique_key"
+               author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE condition_operands DROP INDEX uk_condition_operands;
+        </sql>
+        <sql>
+            ALTER TABLE condition_operands ADD CONSTRAINT uk_condition_operands
+                UNIQUE (project_id, operand, operand_type, operand_data_type, operand_subject, is_deleted);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,201 @@
+#TODO: Update the unit test with new Scenario
+Feature: Read Resource Type
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-R",
+         "name": "FAQ-R",
+         "description": "Frequently Asked Question Project 1",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+        {
+           "key": "FAQ-S",
+           "name": "FAQ-S",
+           "description": "Frequently Asked Question Project 1",
+           "actions": [
+              "view",
+              "update",
+              "create",
+              "delete"
+           ],
+           "tags": [
+              "tag1",
+              "tag2"
+           ]
+        }
+      """
+
+  Scenario: Success: Get All Resource Types
+    Given The Resource Admin wants to get All Resource Type with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get all Resource Type
+    Then the request is successfully with response code 200
+    And a list of all Resource Type is returned in the response
+      """json
+      {
+         "results": [
+            {
+               "key": "FAQ-R",
+               "name": "FAQ-R",
+               "description": "Frequently Asked Question Project 1",
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ],
+               "tags": null
+            },
+            {
+               "key": "FAQ-S",
+               "name": "FAQ-S",
+               "description": "Frequently Asked Question Project 1",
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ],
+               "tags": [
+                  "tag1",
+                  "tag2"
+               ]
+            }
+         ],
+         "metadata": {
+            "totalCount": 1,
+            "totalPageCount": 1,
+            "size": 10
+         }
+      }
+      """
+
+  Scenario: Success: Get All Resource Types with Search by name and keyword
+    Given The Resource Admin wants to get All Resource Type with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get all Resource Type with type 'name' and keyword 'FAQ-S'
+    Then the request is successfully with response code 200
+    And a list of all Resource Type is returned in the response
+      """json
+      {
+         "results": [
+            {
+               "key": "FAQ-S",
+               "name": "FAQ-S",
+               "description": "Frequently Asked Question Project 1",
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ],
+               "tags": [
+                  "tag1",
+                  "tag2"
+               ]
+            }
+         ],
+         "metadata": {
+            "totalCount": 1,
+            "totalPageCount": 1,
+            "size": 10
+         }
+      }
+      """
+
+  Scenario: Negative: Get All Resource Types with Search by wrong type and keyword
+    Given The Resource Admin wants to get All Resource Type with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get all Resource Type with type 'segment' and keyword 'FAQ-S'
+    Then the request is fails with response code 404
+    Then the response body read includes status 404 and error message 'Not Found'
+
+  Scenario: Success: Get Resource Type by key
+    Given Resource Admin wants to retrieve a Resource Type with the key 'FAQ-R' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get Resource Type by key
+    Then the request is successfully with response code 200
+    And return the resource type
+      """
+      {
+         "key": "FAQ-R",
+         "name": "FAQ-R",
+         "description": "Frequently Asked Question Project 1",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": null
+      }
+      """
+
+  Scenario: Success: Get Resource Type by key that has tags
+    Given Resource Admin wants to retrieve a Resource Type with the key 'FAQ-S' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get Resource Type by key
+    Then the request is successfully with response code 200
+    And return the resource type
+      """
+      {
+         "key": "FAQ-S",
+         "name": "FAQ-S",
+         "description": "Frequently Asked Question Project 1",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+
+  Scenario: Success: Get Resource Type with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-R",
+         "name": "FAQ-R",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And Resource Admin wants to retrieve a Resource Type with the key 'FAQ-R' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57722'
+    When the Resource Admin requests to get Resource Type by key
+    Then the request is successfully with response code 200
+    And return the resource type
+      """json
+      {
+         "key": "FAQ-R",
+         "name": "FAQ-R",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": null
+      }
+      """
+
+  Scenario: Negative Get Resource Type by a non-existent Key
+    Given Resource Admin wants to retrieve a Resource Type with the key "wrong_key" and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    When the Resource Admin requests to get Resource Type by key
+    Then the request is fails with response code 404
+    Then the response body read includes status 404 and error message 'Not Found'

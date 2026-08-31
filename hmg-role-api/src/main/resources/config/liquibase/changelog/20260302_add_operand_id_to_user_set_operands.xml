@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260302_add_operand_id_to_user_set_operands"
+               author="[Z4999972] Aditya Murda">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_set_operands" columnName="operand_id" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE user_set_operands
+                ADD COLUMN operand_id BIGINT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260302_drop_not_null_constraint_on_user_operand_column"
+               author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE user_set_operands
+                MODIFY COLUMN operand VARCHAR(255) NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260302_drop_not_null_constraint_on_user_operand_type_column"
+               author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE user_set_operands
+                MODIFY COLUMN operand_type VARCHAR(20) NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20251121_create_project_configuration"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            CREATE TABLE IF NOT EXISTS project_configurations
+            (
+                project_configuration_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                -- most likely won't be used but just add for now to be uniform
+                project_id BIGINT, -- this REFERENCES (project.id)
+                configuration_key VARCHAR(50) NOT NULL,
+                configuration_value TEXT,
+
+                /**
+                either (project_key,
+                configuration_key)
+                or this should be the primary key
+                but this
+                will do for now
+                 **/
+                CONSTRAINT primary_identifier UNIQUE(project_id,configuration_key)
+            );
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

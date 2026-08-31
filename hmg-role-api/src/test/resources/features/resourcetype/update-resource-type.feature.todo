@@ -1,0 +1,556 @@
+Feature: Update Resource Type
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with all required fields.
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question Update",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question Update",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with description: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with description: empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "Project-2-Updated",
+         "description": "Project 2 Updated",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "Project 2 Updated",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with description: blank (whitespace)
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: update Resource Type with tags
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "FAQ-Updated-1",
+            "FAQ-Updated-2"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ-Updated",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "FAQ-Updated-1",
+            "FAQ-Updated-2"
+         ]
+      }
+      """
+
+  Scenario: Negative: update Resource Type with name: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": null,
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Resource Type with name: blank
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Resource Type with actions: null and empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": []
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Resource Type with actions: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": null
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Resource Type with actions: contains duplicate value
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Resource Type by a non-existent Key
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'Wrong_Key' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'
+
+  Scenario: Positive: Update Resource Type to delete any action value that is not used by a policy
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-1",
+         "name": "FAQ-Updated",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY-1",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-1",
+         "scope": "",
+         "actions": [
+            "view",
+            "update"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ-1' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ-1",
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update"
+         ]
+      }
+      """
+
+  Scenario: Positive: Update Resource Type with same Action values but in different order
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-2",
+         "name": "FAQ-Updated",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY-2",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-2",
+         "scope": "",
+         "actions": [
+            "view",
+            "update"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ-2' with the following attributes:
+      """json
+      {
+         "description": "Frequently Asked Question",
+         "name": "FAQ-Updated",
+         "actions": [
+            "delete",
+            "update",
+            "create",
+            "view"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ-2",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: Update Resource Type to add any values in resource actions
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-Updated",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY-3",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-3",
+         "scope": "",
+         "actions": [
+            "view",
+            "update"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ-3' with the following attributes:
+      """json
+      {
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete",
+            "download"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type updated successfully with response code 200
+    And return the updated resource type
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-Updated",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete",
+            "download"
+         ]
+      }
+      """
+
+  Scenario: Negative: update Resource Type when the actions are Used by Policy
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-FU",
+         "name": "FAQ-Updated",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_FAILS_UPDATE",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-FU",
+         "scope": "",
+         "actions": [
+            "view",
+            "update"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Resource Type 'FAQ-FU' with the following attributes:
+      """json
+      {
+         "key": "FAQ-FU",
+         "name": "FAQ-Updated",
+         "description": "FAQ",
+         "actions": [
+            "create",
+            "delete",
+            "download"
+         ]
+      }
+      """
+    When the Resource Admin updates the Resource Type
+    Then the Resource Type update fails with response code 409
+    And the response body includes status 409 and error message 'Conflict'

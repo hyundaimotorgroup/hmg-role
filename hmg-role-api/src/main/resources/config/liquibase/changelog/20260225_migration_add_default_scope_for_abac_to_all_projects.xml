@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+
+    <changeSet id="20260225_migration_add_default_scope_for_abac_to_all_projects" author="rizki nabil aufa">
+        <sql>
+            INSERT INTO scopes (scope_key, scope_name, project_id, access_control_model, created_by, created_at,
+                                updated_by, updated_at, is_deleted)
+            SELECT 'default_scope' as scope_name,
+                   'default_scope' as scope_key,
+                   p.project_id,
+                   'ABAC'          as access_control_model,
+                   'system'        as created_by,
+                   NOW()           as created_at,
+                   'system'        as updated_by,
+                   NOW()           as updated_at,
+                   0               as is_deleted
+            FROM projects p
+            WHERE NOT EXISTS (SELECT 1
+                              FROM scopes s
+                              WHERE s.project_id = p.project_id
+                                AND s.scope_key = 'default_scope'
+                                AND s.access_control_model = 'ABAC')
+              AND p.is_deleted = 0;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20240724_alter_resource_type"
+		author="Rais Rahim">
+
+		<renameColumn tableName="resource_types"
+			oldColumnName="resource_type_key"
+			newColumnName="old_resource_type_key" columnDataType="varchar(255)" />
+
+		<addColumn tableName="resource_types">
+			<column name="resource_type_key" type="varchar(255)"
+				valueComputed="old_resource_type_key">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addUniqueConstraint tableName="resource_types"
+			constraintName="uk_resource_types_projects"
+			columnNames="resource_type_key, project_id" />
+
+		<dropColumn tableName="resource_types"
+			columnName="old_resource_type_key" />
+
+	</changeSet>
+</databaseChangeLog>

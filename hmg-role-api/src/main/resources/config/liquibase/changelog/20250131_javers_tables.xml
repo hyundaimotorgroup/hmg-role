@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+	<changeSet id="20250131_javers_tables"
+		author="henrio septiano">
+		<createTable tableName="jv_global_id">
+			<column name="global_id_pk" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="local_id" type="VARCHAR(255)" />
+			<column name="fragment" type="VARCHAR(200)" />
+			<column name="type_name" type="VARCHAR(200)" />
+			<column name="owner_id_fk" type="BIGINT" />
+		</createTable>
+		<createTable tableName="jv_commit">
+			<column name="commit_pk" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="author" type="VARCHAR(200)" />
+			<column name="commit_date" type="TIMESTAMP" />
+			<column name="commit_date_instant" type="VARCHAR(30)" />
+			<column name="commit_id" type="NUMERIC(22,2)" />
+		</createTable>
+		<createTable tableName="jv_snapshot">
+			<column name="snapshot_pk" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="commit_fk" type="BIGINT" />
+			<column name="global_id_fk" type="BIGINT" />
+			<column name="type" type="VARCHAR(200)" />
+			<column name="version" type="BIGINT" />
+			<column name="state" type="CLOB" />
+			<column name="changed_properties" type="CLOB" />
+			<column name="managed_type" type="VARCHAR(200)" />
+		</createTable>
+
+		<!-- Add indexes -->
+		<createIndex tableName="jv_global_id"
+			indexName="idx_jv_global_id_local_id">
+			<column name="local_id" />
+		</createIndex>
+
+		<createIndex tableName="jv_commit"
+			indexName="idx_jv_commit_commit_id">
+			<column name="commit_id" />
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

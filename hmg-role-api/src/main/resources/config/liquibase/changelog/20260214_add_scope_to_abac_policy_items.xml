@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Step 0: Add scope_id column to abac_policy_items table -->
+    <changeSet id="20260214_add_scope_id_column" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE abac_policy_items
+            ADD COLUMN scope_id BIGINT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- Step 1: Migrate data from scope (scope_key) to scope_id -->
+    <changeSet id="20260214_migrate_scope_to_scope_id" author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            UPDATE abac_policy_items api
+            INNER JOIN abac_policies ap ON api.policy_id = ap.policy_id
+            INNER JOIN scopes s ON api.scope = s.scope_key
+                AND s.project_id = ap.project_id
+                AND s.access_control_model = 'ABAC'
+                AND s.is_deleted = false
+            SET api.scope_id = s.scope_id
+            WHERE api.scope IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- drop the column later
+    <changeSet id="20260214_drop_scope_column" author="system">
+        <sql>
+            ALTER TABLE abac_policy_items
+            DROP COLUMN scope;
+        </sql>
+    </changeSet>
+    -->
+
+</databaseChangeLog>

@@ -1,0 +1,902 @@
+#TODO: Update the unit test with new Scenario
+Feature: Create Policy
+
+  Background:
+    Given The following API keys exist for the Resource Admin:
+      | 22ee17bd-699e-4b6b-a30b-e854e6c57552 |
+      | 22ee17bd-699e-4b6b-a30b-e854e6c57227 |
+    And a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "Frequently Asked Question Project 1",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57227' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_2",
+         "name": "FAQ_2",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tags1",
+            "tags2"
+         ]
+      }
+      """
+    And a Scope for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "scopeKey": "policy_scope_create"
+      }
+      """
+
+  Scenario: Positive: create Policy with all required fields.
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_1",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_1",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with description: null
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_2",
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_2",
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with description: empty
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_3",
+         "description": "",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-2"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_3",
+         "description": "",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-2"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with description: blank (whitespace)
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_4",
+         "description": "  ",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-3"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_4",
+         "description": "  ",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-3"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with scope: null
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_10",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-4"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_10",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-4"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with scope: empty
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_5",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-5"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_5",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-5"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with scope: blank (whitespace)
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_6",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-6"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_6",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-6"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: create Policy with an existing/duplicate key but with different project
+    Given an existing Policy from the project A with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' as the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_7",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-7"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin from the project B with API key '22ee17bd-699e-4b6b-a30b-e854e6c57227' wants to Create a new Policy with the same Key
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_7",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ_2",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-7"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_7",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ_2",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-7"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Negative: create Policy with key: empty
+    Given Resource Admin wants to create a new Policy with an empty key
+      """json
+      {
+         "key": "",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-8"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with key: null
+    Given Resource Admin wants to create a new Policy with a null key
+      """json
+      {
+         "key": null,
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-9"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with key: blank (whitespace)
+    Given Resource Admin wants to create a new Policy with a blank key
+      """json
+      {
+         "key": "  ",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-10"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with resourceType: empty
+    Given Resource Admin wants to create a new Policy with an empty resourceType
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-11"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with resourceType: null
+    Given Resource Admin wants to create a new Policy with a null resourceType
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": null,
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-12"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with resourceType: blank (whitespace)
+    Given Resource Admin wants to create a new Policy with a blank key
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "  ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-13"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with actions: null
+    Given Resource Admin wants to create a new Policy with an null actions
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": null,
+         "roles": [
+            "ADMIN-14"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with actions: empty array
+    Given Resource Admin wants to create a new Policy with an empty actions
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [],
+         "roles": [
+            "ADMIN-15"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with actions: duplicate value
+    Given Resource Admin wants to create a new Policy with an invalid actions containing duplicate values
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "view"
+         ],
+         "roles": [
+            "ADMIN-16"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with actions: Not Associated with Resource Type
+    Given Resource Admin wants to create a new Policy with an actions containing a value not associated with the Resource Type
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_11",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete",
+            "share"
+         ],
+         "roles": [
+            "ADMIN-17"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'
+
+  Scenario: Negative: create Policy with roles: null
+    Given Resource Admin wants to create a new Policy with an null roles
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": null,
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with roles: empty array
+    Given Resource Admin wants to create a new Policy with an empty roles
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with roles: duplicate value
+    Given Resource Admin wants to create a new Policy with an invalid roles containing duplicate values
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_11",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN",
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with effect: empty
+    Given Resource Admin wants to create a new Policy with an empty effect
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-18"
+         ],
+         "effect": ""
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with effect: null
+    Given Resource Admin wants to create a new Policy with a null effect
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-19"
+         ],
+         "effect": null
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with effect: blank (whitespace)
+    Given Resource Admin wants to create a new Policy with a blank effect
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-20"
+         ],
+         "effect": "  "
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Policy with effect: Invalid Value
+    Given Resource Admin wants to create a new Policy with invalid effect
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_8",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-21"
+         ],
+         "effect": "APPROVE"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create duplicate Policy with different key
+    Given a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_DUP",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-22"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    Given Resource Admin wants to create a new Policy with invalid effect
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_DUP_2",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-22"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 409
+    And the response body includes status 409 and error message 'Conflict'
+
+  Scenario: Positive: create Policy with valid scope
+    Given Resource Admin wants to create a new Policy with the following attributes
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_SCOPE",
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "policy_scope_create",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy is created successfully with response code 201
+    And return the created Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_SCOPE",
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "policy_scope_create",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Negative: create Policy with scope: not found
+    Given Resource Admin wants to create a new Policy with an actions containing a value not associated with the Resource Type
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_SCOPE",
+         "description": "FAQ Policy",
+         "resourceType": "FAQ",
+         "scope": "invalid_scope",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin creates a new Policy
+    Then the Policy creation fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'

@@ -1,0 +1,4 @@
+role_key,scope_key,action_name,resource_type_key,effect,project_key,user_key
+Finance Manager,Scope 1,view,Finance Document,ALLOW,Project 1,User 1
+Finance Manager,Scope 1,modify,Finance Document,ALLOW,Project 1,User 1
+Finance Member,Scope 1,view,Finance Document,ALLOW,Project 1,User 1

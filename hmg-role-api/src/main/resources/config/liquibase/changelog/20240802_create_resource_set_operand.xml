@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+	<changeSet id="20240802_create_resource_set_operand"
+		author="henrio septiano">
+		<createTable ifNotExists="true"
+			tableName="resource_set_operands">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="operand" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="position" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="type" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="resource_set_condition_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_abac_resource_operand_condition"
+					references="resource_set_conditions(id)" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

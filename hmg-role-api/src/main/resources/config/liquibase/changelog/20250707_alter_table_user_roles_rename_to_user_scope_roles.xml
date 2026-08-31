@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+	<changeSet
+		id="20250703_alter_table_user_roles_add_column_scope_id_and_is_deleted"
+		author="Z308627">
+		<renameTable oldTableName="user_roles"
+			newTableName="user_scope_roles" />
+	</changeSet>
+</databaseChangeLog>

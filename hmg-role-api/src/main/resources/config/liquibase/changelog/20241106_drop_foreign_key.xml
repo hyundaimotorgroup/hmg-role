@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20241106_drop_foreign_key"
+		author="Henrio Septiano">
+		<dropAllForeignKeyConstraints
+			baseTableName="members" />
+		<dropAllForeignKeyConstraints
+			baseTableName="policy_items" />
+		<dropAllForeignKeyConstraints
+			baseTableName="policies" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_actions" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_types" />
+		<dropAllForeignKeyConstraints
+			baseTableName="roles" />
+		<dropAllForeignKeyConstraints
+			baseTableName="user_roles" />
+		<dropAllForeignKeyConstraints
+			baseTableName="users" />
+		<dropAllForeignKeyConstraints
+			baseTableName="user_condition_operands" />
+		<dropAllForeignKeyConstraints
+			baseTableName="user_condition_sets" />
+		<dropAllForeignKeyConstraints
+			baseTableName="user_sets" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_set_operands" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_set_conditions" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_set_actions" />
+		<dropAllForeignKeyConstraints
+			baseTableName="resource_sets" />
+		<dropAllForeignKeyConstraints
+			baseTableName="abac_policy_items" />
+		<dropAllForeignKeyConstraints
+			baseTableName="abac_policies" />
+
+
+	</changeSet>
+</databaseChangeLog>

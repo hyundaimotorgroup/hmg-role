@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260313_split_scope_abac_create_table" author="[Z4999972] Aditya Murda Nugraha">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="abac_scopes" /></not>
+        </preConditions>
+
+        <sql stripComments="true">
+
+            CREATE TABLE abac_scopes (
+                abac_scope_id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                abac_scope_key varchar(50) NOT NULL,
+                abac_scope_name varchar(50) NOT NULL,
+                project_id bigint NOT NULL, -- REFERENCES project.project_id
+                created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_by varchar(50) NOT NULL,
+                updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_by varchar(50) NOT NULL,
+                is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+
+                UNIQUE(abac_scope_key, project_id)
+            );
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260313_populate_initial_abac_scope" author="[Z4999972] Aditya Murda">
+        <sql>
+            INSERT IGNORE INTO abac_scopes
+            (abac_scope_id, abac_scope_key, abac_scope_name, project_id, created_at, created_by, updated_at, updated_by, is_deleted)
+            SELECT scope_id, scope_key, scope_name, project_id, created_at, created_by, updated_at, updated_by, is_deleted
+            FROM scopes
+            WHERE access_control_model = 'ABAC';
+        </sql>
+
+        <sql stripComments="true">
+            UPDATE projects p
+            LEFT JOIN abac_scopes s ON s.project_id = p.project_id
+            SET p.default_scope_id_abac = s.abac_scope_id
+            WHERE s.abac_scope_key = 'default_scope';
+        </sql>
+
+        <sql>
+            DELETE FROM scopes
+            WHERE access_control_model = 'ABAC';
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260313_drop_scope_type_column" author="[Z4999972] Aditya Murda">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="scopes" columnName="access_control_model" />
+        </preConditions>
+        <sql>
+            ALTER TABLE scopes
+            DROP COLUMN access_control_model;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

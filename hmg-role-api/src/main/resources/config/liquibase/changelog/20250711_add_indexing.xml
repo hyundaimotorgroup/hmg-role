@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+	<changeSet id="20250711_add_indexing"
+		author="henrio septiano">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="ix_scope_project_id_is_deleted" />
+				<indexExists
+					indexName="ix_role_project_id_is_deleted_role_name" />
+				<indexExists
+					indexName="ix_role_project_id_is_deleted_role_key" />
+				<indexExists
+					indexName="ix_resource_type_project_id_is_deleted_parent_id" />
+				<indexExists
+					indexName="ix_resource_type_is_deleted_parent_id" />
+				<indexExists
+					indexName="ix_resource_type_project_id_is_deleted_resource_type_name" />
+				<indexExists
+					indexName="ix_resource_type_project_id_is_deleted" />
+				<indexExists indexName="ix_resource_action_name" />
+				<indexExists indexName="ix_resource_type_tags" />
+				<indexExists indexName="ix_scope_key" />
+				<indexExists indexName="ix_role_key" />
+				<indexExists indexName="ix_resource_type_key" />
+				<indexExists
+					indexName="ix_rbac_policy_project_id_is_deleted" />
+				<indexExists
+					indexName="ix_rbac_policy_items_scope_id_role_id" />
+				<indexExists indexName="ix_resource_type_parent_id" />
+			</not>
+		</preConditions>
+		<createIndex indexName="ix_scope_project_id_is_deleted"
+			tableName="scopes">
+			<column name="project_id" />
+			<column name="is_deleted" />
+		</createIndex>
+		<createIndex
+			indexName="ix_role_project_id_is_deleted_role_name" tableName="roles">
+			<column name="project_id" />
+			<column name="is_deleted" />
+			<column name="role_name" />
+		</createIndex>
+		<createIndex
+			indexName="ix_role_project_id_is_deleted_role_key" tableName="roles">
+			<column name="project_id" />
+			<column name="role_key" />
+			<column name="is_deleted" />
+		</createIndex>
+		<createIndex
+			indexName="ix_resource_type_project_id_is_deleted_parent_id"
+			tableName="resource_types">
+			<column name="project_id" />
+			<column name="is_deleted" />
+			<column name="parent_id" />
+		</createIndex>
+		<createIndex
+			indexName="ix_resource_type_is_deleted_parent_id"
+			tableName="resource_types">
+			<column name="is_deleted" />
+			<column name="parent_id" />
+		</createIndex>
+		<createIndex
+			indexName="ix_resource_type_project_id_is_deleted_resource_type_name"
+			tableName="resource_types">
+			<column name="project_id" />
+			<column name="is_deleted" />
+			<column name="resource_type_name" />
+		</createIndex>
+		<createIndex
+			indexName="ix_resource_type_project_id_is_deleted"
+			tableName="resource_types">
+			<column name="project_id" />
+			<column name="is_deleted" />
+		</createIndex>
+		<createIndex indexName="ix_resource_action_name"
+			tableName="resource_actions">
+			<column name="action_name" />
+		</createIndex>
+		<createIndex indexName="ix_resource_type_tags"
+			tableName="resource_type_tags">
+			<column name="tag" />
+		</createIndex>
+		<createIndex indexName="ix_scope_key" tableName="scopes">
+			<column name="scope_key" />
+		</createIndex>
+		<createIndex indexName="ix_role_key" tableName="roles">
+			<column name="role_key" />
+		</createIndex>
+		<createIndex indexName="ix_resource_type_key"
+			tableName="resource_types">
+			<column name="resource_type_key" />
+		</createIndex>
+		<createIndex
+			indexName="ix_rbac_policy_project_id_is_deleted"
+			tableName="rbac_policies">
+			<column name="project_id" />
+			<column name="is_deleted" />
+		</createIndex>
+		<createIndex
+			indexName="ix_rbac_policy_items_scope_id_role_id"
+			tableName="rbac_policy_items">
+			<column name="scope_id" />
+			<column name="role_id" />
+		</createIndex>
+		<createIndex indexName="ix_resource_type_parent_id"
+			tableName="resource_types">
+			<column name="parent_id" />
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

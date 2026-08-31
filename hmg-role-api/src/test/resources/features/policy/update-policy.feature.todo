@@ -1,0 +1,802 @@
+#TODO: Update the unit test with new Scenario
+Feature: Update Policy
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "name": "FAQ",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+    And a Scope for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "scopeKey": "policy_scope"
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with all required fields.
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-1"
+         ],
+         "effect": "DENY"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-1"
+         ],
+         "effect": "DENY"
+      }
+      """
+
+  Scenario: Positive: update Policy with description: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """
+      {
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": null,
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with description: empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with description: blank (whitespace)
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "  ",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "  ",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with scope: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with scope: empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with scope: blank (whitespace)
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: update Policy with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    And the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-2"
+         ],
+         "effect": "DENY"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-2"
+         ],
+         "effect": "DENY"
+      }
+      """
+
+  Scenario: Negative: update Policy with resourceType: empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with resourceType: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": null,
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with resourceType: blank (whitespace)
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "  ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with actions: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": null,
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with actions: empty array
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with actions: duplicate value
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "view"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with actions: Not Associated with Resource Type
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete",
+            "share"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'
+
+  Scenario: Negative: update Policy with roles: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": null,
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with roles: empty array
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with roles: duplicate value
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1",
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with effect: empty
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": ""
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with effect: null
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": null
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with effect: blank (whitespace)
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "  "
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: update Policy with effect: Invalid Value
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "APPROVE"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: Update Policy by a non-existent Key
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'Wrong_Key' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-U1"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'
+
+  Scenario: Positive: Update Policy with valid scope
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "policy_scope",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-SCOPE"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy updated successfully with response code 200
+    And return the updated Policy
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY",
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "policy_scope",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER-SCOPE"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Negative: update Policy with scope: Invalid Value
+    Given the Resource Admin with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' wants to update the Policy key 'FAQ_ADMIN_POLICY' with the following attributes:
+      """json
+      {
+         "description": "FAQ resource policy for Admin Update",
+         "resourceType": "FAQ",
+         "scope": "invalid-scope",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "USER"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When the Resource Admin updates the Policy
+    Then the Policy Update fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'

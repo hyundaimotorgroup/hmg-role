@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20241121_rename_column_roles_name"
+		author="Ahmad Habbuddin">
+
+		<renameColumn columnDataType="varchar(75)"
+			newColumnName="role_name" oldColumnName="name" tableName="roles" />
+
+		<addNotNullConstraint tableName="roles"
+			columnName="role_name" columnDataType="varchar(75)" />
+
+	</changeSet>
+</databaseChangeLog>

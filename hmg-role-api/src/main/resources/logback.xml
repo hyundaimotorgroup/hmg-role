@@ -1,0 +1,14 @@
+<configuration>
+	<appender name="jsonConsoleAppender"
+		class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level)
+        %logger
+        %boldWhite([%C.%M:%yellow(%L)]) - %msg%n</pattern>
+    </encoder>
+	</appender>
+
+	<root level="trace">
+		<appender-ref ref="jsonConsoleAppender" />
+	</root>
+</configuration>

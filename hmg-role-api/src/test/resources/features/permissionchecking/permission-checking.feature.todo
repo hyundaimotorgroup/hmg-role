@@ -1,0 +1,1436 @@
+#TODO: Update the unit test with new Scenario
+Feature: RBAC Permission Checking
+
+  Background:
+    Given the HMG Role Admin has the following API key: '22ee17bd-699e-4b6b-a30b-e854e6c576c5'
+    * a Project with the following attributes exists
+      """json
+      {
+         "key": "hmg-notice",
+         "name": "HMG Notice"
+      }
+      """
+    * an existing Member as the following attributes
+      """json
+        {
+           "key": "alice_ignite",
+           "name": "alice",
+           "apiKey": "22ee17bd-699e-4b6b-a30b-e854e6c57999",
+           "type": "ADMIN"
+        }
+      """
+    * a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-RBAC-TEST",
+         "name": "FAQ-RBAC-TEST",
+         "description": "FAQ-RBAC-TEST",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    * a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-RBAC-TEST-2",
+         "name": "FAQ-RBAC-TEST-2",
+         "description": "FAQ-RBAC-TEST-2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tags1",
+            "tags2"
+         ]
+      }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "key": "POLICY_PERMISSION_TEST",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-RBAC-TEST",
+         "scope": "",
+         "actions": [
+            "update",
+            "create"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "key": "POLICY_PERMISSION_TEST_2",
+         "description": "FAQ resource policy for Admin 2",
+         "resourceType": "FAQ-RBAC-TEST-2",
+         "actions": [
+            "view",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    * a Scope for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "scopeKey": "rbac_permission_scope"
+      }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57999' with specific attributes exists
+      """json
+      {
+         "key": "POLICY_PERMISSION_TEST_3",
+         "description": "FAQ resource policy for Admin 2",
+         "resourceType": "FAQ-RBAC-TEST-2",
+         "scope": "rbac_permission_scope",
+         "actions": [
+            "view",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN-SCOPE"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with case: Resource match, actions match, policy match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "update",
+                  "create"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "update",
+                     "role"  : "ADMIN",
+                     "effect": "ALLOW"
+                  },
+                  {
+                     "action": "create",
+                     "role"  : "ADMIN",
+                     "effect": "ALLOW"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with case: Resource match, actions match, policy no-match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "view",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  },
+                  {
+                     "action": "delete",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with case: Resource match, actions no-match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "download",
+                  "share"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "download",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  },
+                  {
+                     "action": "share",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with case: Resource no-match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "download",
+                  "share"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actionEffects": [
+                  {
+                     "action": "download",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  },
+                  {
+                     "action": "share",
+                     "role": "ADMIN",
+                     "effect": "DENY"
+                  }
+               ]
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with all fields: flattenResponseFormat is true
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "view",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "update",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "create",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "delete",
+               "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with Undefined resources.actions for the user.roles
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "SERVER"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "SERVER",
+               "action": "view",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "SERVER",
+               "action": "create",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "SERVER",
+               "action": "update",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "SERVER",
+               "action": "delete",
+               "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with all optional fields: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": null,
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "view",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "update",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "create",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "delete",
+               "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with all optional fields: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "view",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "create",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "update",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "",
+               "role": "ADMIN",
+               "action": "delete",
+               "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with all optional fields: blank
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "  ",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": "  "
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "  ",
+               "role": "ADMIN",
+               "action": "view",
+               "effect": "DENY"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "  ",
+               "role": "ADMIN",
+               "action": "create",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "  ",
+               "role": "ADMIN",
+               "action": "update",
+               "effect": "ALLOW"
+            },
+            {
+               "id": "CCI-FAQ-1",
+               "type": "FAQ-RBAC-TEST",
+               "scope": "  ",
+               "role": "ADMIN",
+               "action": "delete",
+               "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with user: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": null,
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with user.roles: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": null,
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": "CCI"
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with user.roles: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": null
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": []
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.actions: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": null
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.actions: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": []
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": null,
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.key: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": null,
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.key: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.key: blank
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "  ",
+                  "type": "FAQ-RBAC-TEST",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.type: null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": null,
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.type: empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: RBAC Permission Checking with resources.resource.type: blank
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-1",
+                  "type": "  ",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "update",
+                  "create",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'false'
+    Then the permission check fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Positive: RBAC Permission Checking with case: uninputted Scope, Resource match, actions match, policy match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN"
+            ]
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": null,
+                  "role"  : "ADMIN",
+                  "action": "view",
+                  "effect": "ALLOW"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": null,
+                  "role"  : "ADMIN",
+                  "action": "delete",
+                  "effect": "ALLOW"
+            }
+         ]
+      }
+      """
+
+  Scenario: Positive: RBAC Permission Checking with User and Resource Scope match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ],
+            "scope": "rbac_permission_scope"
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "ALLOW"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "ALLOW"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with user scope: Invalid value
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ],
+            "scope": "invalid_scope"
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "DENY"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with user scope: Null
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ]
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "DENY"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with user scope: Empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ],
+            "scope": ""
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "DENY"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "rbac_permission_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with case: User Scope match, Resource Scope not match
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ],
+            "scope": "rbac_permission_scope"
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "invalid_scope"
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "invalid_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "DENY"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "invalid_scope",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "DENY"
+            }
+         ]
+      }
+      """
+
+  Scenario: Negative: RBAC Permission Checking with case: User Scope match, Resource Scope empty
+    Given the Resource Server wants to check permissions with the following attributes:
+      """json
+      {
+         "user": {
+            "id": "alice_ignite",
+            "roles": [
+               "ADMIN-SCOPE"
+            ],
+            "scope": "rbac_permission_scope"
+         },
+         "resources": [
+            {
+               "resource": {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": ""
+               },
+               "actions": [
+                  "view",
+                  "delete"
+               ]
+            }
+         ]
+      }
+      """
+    When the Resource Server checks permissions with flattenResponseFormat is 'true'
+    Then the permission check is successful with response code 200
+    And the response body contains the following attributes:
+      """json
+      {
+         "results": [
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "view",
+                  "effect": "DENY"
+            },
+            {
+                  "id": "CCI-FAQ-2",
+                  "type": "FAQ-RBAC-TEST-2",
+                  "scope": "",
+                  "role"  : "ADMIN-SCOPE",
+                  "action": "delete",
+                  "effect": "DENY"
+            }
+         ]
+      }
+      """

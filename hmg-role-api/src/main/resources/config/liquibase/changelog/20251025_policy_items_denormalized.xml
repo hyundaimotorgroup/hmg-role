@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20251025_policy_items_denormalized"
+		author="Rais">
+
+		<addColumn tableName="rbac_policy_items">
+			<column name="resource_type_key" type="varchar(100)" />
+			<column name="action_name" type="varchar(100)" />
+			<column name="role_key" type="varchar(100)" />
+			<column name="scope_key" type="varchar(100)" />
+			<column name="project_key" type="varchar(100)" />
+			<column name="policy_key" type="varchar(100)" />
+			<column name="policy_description" type="varchar(255)" />
+		</addColumn>
+
+		<sql>
+			UPDATE rbac_policy_items rpi
+			JOIN resource_actions ra ON
+			rpi.resource_action_id =
+			ra.resource_action_id
+			JOIN resource_types rt
+			ON ra.resource_type_id = ra.resource_type_id
+			JOIN scopes s ON
+			s.scope_id = rpi.scope_id
+			JOIN roles r ON r.id = rpi.role_id
+			JOIN
+			rbac_policies rp ON rpi.policy_id = rp.policy_id
+			JOIN projects p ON
+			p.project_id = rp.project_id
+			SET rpi.resource_type_key =
+			rt.resource_type_key,
+			rpi.action_name = ra.action_name,
+			rpi.role_key =
+			r.role_key,
+			rpi.scope_key = s.scope_key,
+			rpi.project_key =
+			p.project_key,
+			rpi.policy_key = rp.policy_key,
+			rpi.policy_description =
+			rp.description
+		</sql>
+
+		<createIndex tableName="rbac_policy_items"
+			indexName="index_search_rbac_policies">
+			<column name="resource_type_key" />
+			<column name="action_name" />
+			<column name="role_key" />
+			<column name="scope_key" />
+			<column name="project_key" />
+		</createIndex>
+
+	</changeSet>
+
+</databaseChangeLog>

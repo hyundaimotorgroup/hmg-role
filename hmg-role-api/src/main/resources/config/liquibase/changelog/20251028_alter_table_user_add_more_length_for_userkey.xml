@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+	<changeSet
+		id="20251028_alter_table_user_add_more_length_for_userkey"
+		author="Rizki nabil aufa">
+		<modifyDataType tableName="users" columnName="user_key"
+			newDataType="varchar(85)" />
+	</changeSet>
+
+</databaseChangeLog>

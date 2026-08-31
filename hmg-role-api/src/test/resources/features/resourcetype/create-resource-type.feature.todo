@@ -1,0 +1,539 @@
+#TODO: Update the unit test with new Scenario
+Feature: Create Resource Type
+
+  Background:
+    Given The following API keys exist for the Resource Admin:
+      | 22ee17bd-699e-4b6b-a30b-e854e6c57552 |
+      | 22ee17bd-699e-4b6b-a30b-e854e6c57722 |
+
+  Scenario: Positive: create Resource Type with all required fields.
+    Given Resource Admin wants to create a new Resource Type with the following attributes
+      """json
+      {
+         "key": "FAQ-RT",
+         "description": "Frequently Asked Question",
+         "name": "FAQ-RT",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-RT",
+         "name": "FAQ-RT",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: create Resource Type with description: null
+    Given Resource Admin wants to create a new Resource Type with the following attributes
+      """json
+      {
+         "key": "FAQ-1",
+         "name": "FAQ-1",
+         "description": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-1",
+         "name": "FAQ-1",
+         "description": null,
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: create Resource Type with description: empty
+    Given Resource Admin wants to create a new Resource Type with the following attributes
+      """json
+      {
+         "key": "FAQ-2",
+         "name": "FAQ-2",
+         "description": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-2",
+         "name": "FAQ-2",
+         "description": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: create Resource Type with description: blank (whitespace)
+    Given Resource Admin wants to create a new Resource Type with the following attributes
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-3",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-3",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Positive: create Resource Type with tags
+    Given Resource Admin wants to create a new Resource Type with the following attributes
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-3",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag3",
+            "tag4"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-3",
+         "name": "FAQ-3",
+         "description": "  ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag3",
+            "tag4"
+         ]
+      }
+      """
+
+  Scenario: Positive: create Resource Type with an existing/duplicate key but with different project
+    Given an existing Resource Type from the project A with API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' as the following attributes
+      """json
+      {
+         "key": "FAQ-4",
+         "name": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And the Resource Admin from the project B with API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' wants to Create a new Resource Type with the same Key
+      """json
+      {
+         "key": "FAQ-4",
+         "name": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type with an existing or duplicate key
+    Then the Resource Type is created successfully with response code 201
+    And return the created resource type
+      """json
+      {
+         "key": "FAQ-4",
+         "name": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+
+  Scenario: Negative: create Resource Type with key: empty
+    Given Resource Admin wants to create a new Resource Type with an empty key
+      """json
+      {
+         "key": "",
+         "name": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with key: null
+    Given Resource Admin wants to create a new Resource Type with a null key
+      """json
+      {
+         "key": null,
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with key: blank (whitespace)
+    Given Resource Admin wants to create a new Resource Type with a blank key
+      """json
+      {
+         "key": "   ",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with name: empty
+    Given Resource Admin wants to create a new Resource Type with an empty name
+      """json
+      {
+         "key": "",
+         "name": "",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with name: null
+    Given Resource Admin wants to create a new Resource Type with an null name
+      """json
+      {
+         "key": "",
+         "name": "",
+         "description": "Frequently Asked Question",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with actions: null
+    Given Resource Admin wants to create a new Resource Type with an null actions
+      """json
+      {
+         "key": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": null
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: create Resource Type with actions: empty array
+    Given Resource Admin wants to create a new Resource Type with an empty actions
+      """json
+      {
+         "key": "FAQ-4",
+         "description": "Frequently Asked Question",
+         "actions": []
+      }
+      """
+    When the Resource Admin creates a new Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Positive: Creation Multiple Resource Types with All Required Fields
+    Given Resource Admin wants to create Multiple Resource Type with the following attributes
+      """json
+      [
+         {
+            "key": "FAQ-5",
+            "name": "FAQ-5",
+            "description": "Frequently Asked Question",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ]
+         },
+         {
+            "key": "Term",
+            "name": "Term",
+            "description": "Term",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ]
+         }
+      ]
+      """
+    When The Resource Admin creates Multiple Resource Type
+    Then The Resource Type create succeeded with response code 201
+    And return the created multiple resource type
+      """json
+      {
+      "results": [
+           {
+              "key": "FAQ-5",
+              "name": "FAQ-5",
+              "description": "Frequently Asked Question",
+              "actions": [
+                 "view",
+                 "update",
+                 "create",
+                 "delete"
+              ]
+           },
+           {
+              "key": "Term",
+              "name": "Term",
+              "description": "Term",
+              "actions": [
+                 "view",
+                 "update",
+                 "create",
+                 "delete"
+              ]
+           }
+        ]
+      }
+      """
+
+  Scenario: Positive: Creation Multiple Resource Types with All Required Fields Include tags
+    Given Resource Admin wants to create Multiple Resource Type with the following attributes
+      """json
+      [
+         {
+            "key": "FAQ-52",
+            "name": "FAQ-52",
+            "description": "Frequently Asked Question",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ],
+            "tags": [
+               "tag-FAQ-52",
+               "tag-FAQ-52-1"
+            ]
+         },
+         {
+            "key": "Term2",
+            "name": "Term2",
+            "description": "Term",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ],
+            "tags": [
+              "tag-Term-52",
+              "tag-Term-52-1"
+            ]
+         }
+      ]
+      """
+    When The Resource Admin creates Multiple Resource Type
+    Then The Resource Type create succeeded with response code 201
+    And return the created multiple resource type
+      """json
+      {
+      "results": [
+           {
+              "key": "FAQ-52",
+              "name": "FAQ-52",
+              "description": "Frequently Asked Question",
+              "actions": [
+                 "view",
+                 "update",
+                 "create",
+                 "delete"
+              ],
+              "tags": [
+               "tag-FAQ-52",
+               "tag-FAQ-52-1"
+              ]
+           },
+           {
+              "key": "Term2",
+              "name": "Term2",
+              "description": "Term",
+              "actions": [
+                 "view",
+                 "update",
+                 "create",
+                 "delete"
+              ],
+              "tags": [
+                "tag-Term-52",
+                "tag-Term-52-1"
+              ]
+           }
+        ]
+      }
+      """
+
+  Scenario: Negative: Creation Multiple Resource Type with request body: empty
+    Given Resource Admin wants to create Multiple Resource Type with an empty request body
+      """json
+      []
+      """
+    When The Resource Admin creates Multiple Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the error response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: Creation Multiple Resource Type with request body: array size more than 100
+    Given the Resource Admin wants to create Multiple Resource Type with more than 100 resource type data
+      """json
+      [
+         {
+            "key": "FAQ-M",
+            "name": "FAQ-M",
+            "description": "Frequently Asked Question",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ]
+         }
+      ]
+      """
+    When The Resource Admin creates Multiple Resource Type
+    Then the Resource Type creation fails with response code 400
+    And the error response body includes status 400 and error message 'Bad Request'
+
+  Scenario: Negative: Creation Multiple Resource Type with request body: contains duplicate key
+    Given Resource Admin wants to create Multiple Resource Type with Duplicate Key
+      """json
+      [
+         {
+            "key": "FAQ-M",
+            "name": "FAQ-M",
+            "description": "Frequently Asked Question",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ]
+         },
+         {
+            "key": "FAQ-M",
+            "name": "FAQ-M",
+            "description": "Frequently Asked Question 2",
+            "actions": [
+               "view",
+               "update",
+               "create",
+               "delete"
+            ]
+         }
+      ]
+      """
+    When The Resource Admin creates Multiple Resource Type
+    Then the Resource Type creation fails with response code 409
+    And verify whether data with key "FAQ-M" has been rolled back
+    And the error response body includes status 409 and error message 'Conflict'

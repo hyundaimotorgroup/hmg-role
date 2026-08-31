@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="20251028_policy_items_index_policy_key"
+		author="[Z4999972] Aditya Murda Nugraha">
+
+		<createIndex tableName="rbac_policy_items"
+			indexName="rbac_policy_items_policy_key_idx">
+			<column name="policy_key" />
+		</createIndex>
+
+	</changeSet>
+
+</databaseChangeLog>

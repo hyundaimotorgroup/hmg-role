@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260106_update_user_set_table"
+               author="[Z4999972] Aditya Murda Nugraha">
+        <sql>
+            ALTER TABLE user_sets
+            ADD COLUMN user_set_name VARCHAR(125) NOT NULL,
+            CHANGE COLUMN user_set_key user_set_key VARCHAR(125),
+            CHANGE COLUMN description description VARCHAR(500);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

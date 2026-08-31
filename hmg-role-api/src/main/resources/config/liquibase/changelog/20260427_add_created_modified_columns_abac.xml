@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="20260427_add_created_modified_columns_user_set" author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE user_sets
+                ADD COLUMN created_by VARCHAR(255),
+                ADD COLUMN created_at DATETIME,
+                ADD COLUMN updated_by VARCHAR(255),
+                ADD COLUMN updated_at DATETIME;
+        </sql>
+    </changeSet>
+    <changeSet id="20260427_fill_created_modified_columns_user_set" author="[Z4999972] Aditya Murda">
+        <sql>
+            UPDATE user_sets
+            SET created_by = 'SYSTEM',
+                created_at = NOW(),
+                updated_by = 'SYSTEM',
+                updated_at = NOW()
+            WHERE created_by IS NULL OR created_by = '';
+        </sql>
+    </changeSet>
+    <changeSet id="20260427_add_created_modified_columns_resource_set" author="[Z4999972] Aditya Murda">
+        <sql>
+            ALTER TABLE resource_sets
+                ADD COLUMN created_by VARCHAR(255),
+                ADD COLUMN created_at DATETIME,
+                ADD COLUMN updated_by VARCHAR(255),
+                ADD COLUMN updated_at DATETIME;
+        </sql>
+    </changeSet>
+    <changeSet id="20260427_fill_created_modified_columns_resource_set" author="[Z4999972] Aditya Murda">
+        <sql>
+            UPDATE resource_sets
+            SET created_by = 'SYSTEM',
+                created_at = NOW(),
+                updated_by = 'SYSTEM',
+                updated_at = NOW()
+            WHERE created_by IS NULL OR created_by = '';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,105 @@
+#TODO: Update the unit test with new Scenario
+Feature: Delete Resource Type
+
+  Background:
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-D",
+         "name": "FAQ-D",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    And a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-E",
+         "name": "FAQ-E",
+         "description": "FAQ",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "tags": [
+            "tag1",
+            "tag2"
+         ]
+      }
+      """
+
+  Scenario: Success: delete by Key
+    When Resource Admin wants to delete the Resource Type with key 'FAQ-D' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Resource Type deleted successfully with response code 204
+
+  Scenario: Success: delete by Key with tags
+    When Resource Admin wants to delete the Resource Type with key 'FAQ-E' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Resource Type deleted successfully with response code 204
+
+  Scenario: Success: Delete Resource with an existing/duplicate key but with different project
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57722' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-D",
+         "name": "FAQ-D",
+         "description": "Frequently Asked Question Project 2",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    When Resource Admin wants to delete the Resource Type with key 'FAQ-D' and API key '22ee17bd-699e-4b6b-a30b-e854e6c57722'
+    Then the Resource Type deleted successfully with response code 204
+
+  Scenario: Negative Delete Resource Type by a non-existent Key
+    When Resource Admin wants to delete the Resource Type with key "FailKey" and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Resource Type deletion fails with response code 404
+    And the response body includes status 404 and error message 'Not Found'
+
+  Scenario: Negative Delete the Resource Type Used by Policy
+    Given a Resource Type for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ-DP",
+         "name": "FAQ-DP",
+         "description": "FAQ Duplicate Test",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ]
+      }
+      """
+    * a Policy for API key '22ee17bd-699e-4b6b-a30b-e854e6c57552' with specific attributes exists
+      """json
+      {
+         "key": "FAQ_ADMIN_POLICY_USED",
+         "description": "FAQ resource policy for Admin",
+         "resourceType": "FAQ-DP",
+         "scope": "",
+         "actions": [
+            "view",
+            "update",
+            "create",
+            "delete"
+         ],
+         "roles": [
+            "ADMIN"
+         ],
+         "effect": "ALLOW"
+      }
+      """
+    When Resource Admin wants to delete the Resource Type with key "FAQ-DP" and API key '22ee17bd-699e-4b6b-a30b-e854e6c57552'
+    Then the Resource Type deletion fails with response code 409
+    And the response body includes status 409 and error message 'Conflict'
